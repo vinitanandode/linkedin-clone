@@ -47,7 +47,7 @@ export function postArticleAPI(payload) {
       const upload = storage
         .ref(`images/${payload.image.name}`)
         .put(payload.image);
-
+      //upload
       upload.on(
         "state_changed",
         (snapshot) => {
