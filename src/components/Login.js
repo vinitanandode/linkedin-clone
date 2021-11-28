@@ -2,6 +2,9 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { signInAPI } from "../actions";
 import { Redirect } from "react-router";
+import imgLoginLogo from "../images/login-logo.svg";
+import imgLoginHero from "../images/login-hero.svg";
+import imgGoogle from "../images/google.svg";
 
 const Login = (props) => {
   return (
@@ -9,7 +12,7 @@ const Login = (props) => {
       {props.user && <Redirect to="/home" />}
       <Nav>
         <a href="/">
-          <img src="/images/login-logo.svg" alt="" />
+          <img src={imgLoginLogo} alt="" />
         </a>
         <div>
           <Join>Join Now</Join>
@@ -19,11 +22,11 @@ const Login = (props) => {
       <Section>
         <Hero>
           <h1>Welcome to your professional community</h1>
-          <img src="/images/login-hero.svg" />
+          <img src={imgLoginHero} />
         </Hero>
         <Form>
           <Google onClick={() => props.SignIn()}>
-            <img src="/images/google.svg" />
+            <img src={imgGoogle} />
             Sign in with Google
           </Google>
         </Form>

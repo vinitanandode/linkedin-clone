@@ -1,5 +1,10 @@
 import styled from "styled-components";
 import { connect } from "react-redux";
+import imgWidgetIcon from "../images/widget-icon.svg";
+import imgItemIcon from "../images/item-icon.svg";
+import imgPlusIcon from "../images/plus-icon.svg";
+import imgCardBg from "../images/card-bg.svg";
+import imgPhoto from "../images/photo.svg";
 
 const LeftSide = (props) => {
   return (
@@ -23,12 +28,12 @@ const LeftSide = (props) => {
               <span>Connections</span>
               <span>Grow your network</span>
             </div>
-            <img src="/images/widget-icon.svg" />
+            <img src={imgWidgetIcon} />
           </a>
         </Widget>
         <Item>
           <span>
-            <img src="/images/item-icon.svg" />
+            <img src={imgItemIcon} />
             My Items
           </span>
         </Item>
@@ -40,7 +45,7 @@ const LeftSide = (props) => {
         <a>
           <span>
             Events
-            <img src="/images/plus-icon.svg" />
+            <img src={imgPlusIcon} />
           </span>
         </a>
         <a>
@@ -78,7 +83,7 @@ const UserInfo = styled.div`
 `;
 
 const CardBackground = styled.div`
-  background: url("/images/card-bg.svg");
+  background: url(${imgCardBg});
   background-position: center;
   background-size: 462px;
   height: 54px;
@@ -87,7 +92,7 @@ const CardBackground = styled.div`
 
 const Photo = styled.div`
   box-shadow: none;
-  background-image: url("/images/photo.svg");
+  background-image: url(${imgPhoto});
   width: 72px;
   height: 72px;
   box-sizing: border-box;

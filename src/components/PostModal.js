@@ -4,6 +4,10 @@ import ReactPlayer from "react-player";
 import { connect } from "react-redux";
 import firebase from "firebase";
 import { postArticleAPI } from "../actions";
+import imgUser from "../images/user.svg";
+import imgShareImg from "../images/share-image.svg";
+import imgShareVideo from "../images/share-video.svg";
+import imgShareComment from "../images/share-comment.svg";
 
 const PostModal = (props) => {
   const [editorText, setEditorText] = useState("");
@@ -61,7 +65,7 @@ const PostModal = (props) => {
             <Header>
               <h2>Create a post</h2>
               <button onClick={(event) => reset(event)}>
-                <img src="/images/close.svg" alt="" />
+                <img src={imgClose} alt="" />
               </button>
             </Header>
             <SharedContent>
@@ -69,7 +73,7 @@ const PostModal = (props) => {
                 {props.user.photoURL ? (
                   <img src={props.user.photoURL} />
                 ) : (
-                  <img src="/images/user.svg" alt="" />
+                  <img src={imgUser} alt="" />
                 )}
                 <span>{props.user.displayName}</span>
               </UserInfo>
@@ -117,15 +121,15 @@ const PostModal = (props) => {
             <SharedCreation>
               <AttachAssets>
                 <AssetButton onClick={() => switchAssetArea("image")}>
-                  <img src="/images/share-image.svg" alt="" />
+                  <img src={imgShareImg} alt="" />
                 </AssetButton>
                 <AssetButton onClick={() => switchAssetArea("media")}>
-                  <img src="/images/share-video.svg" alt="" />
+                  <img src={imgShareVideo} alt="" />
                 </AssetButton>
               </AttachAssets>
               <ShareComment>
                 <AssetButton>
-                  <img src="/images/share-comment.svg" alt="" />
+                  <img src={imgShareComment} alt="" />
                   Anyone
                 </AssetButton>
               </ShareComment>

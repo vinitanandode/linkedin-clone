@@ -4,6 +4,17 @@ import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { getArticlesAPI } from "../actions";
 import ReactPlayer from "react-player";
+import imgUser from "../images/user.svg";
+import imgPhotoIcon from "../images/photo-icon.svg";
+import imgVideoIcon from "../images/video-icon.svg";
+import imgEventIcon from "../images/event-icon.svg";
+import imgArticleIcon from "../images/article-icon.svg";
+import imgLoading from "../images/loading.svg";
+import imgEllipsis from "../images/ellipsis.svg";
+import imgLikeIcon from "../images/like-icon.svg";
+import imgCommentsIcon from "../images/comments-icon.svg";
+import imgShareIcon from "../images/share-icon.svg";
+import imgSendIcon from "../images/send-icon.svg";
 
 const Main = (props) => {
   const [showModal, setShowModal] = useState("close");
@@ -43,7 +54,7 @@ const Main = (props) => {
               {props.user && props.user.photoURL ? (
                 <img src={props.user.photoURL} />
               ) : (
-                <img src="/images/user.svg" />
+                <img src={imgUser} />
               )}
               <button
                 onClick={handleClick}
@@ -54,25 +65,25 @@ const Main = (props) => {
             </div>
             <div>
               <button>
-                <img src="/images/photo-icon.svg" />
+                <img src={imgPhotoIcon} />
                 <span>Photo</span>
               </button>
               <button>
-                <img src="/images/video-icon.svg" />
+                <img src={imgVideoIcon} />
                 <span>Video</span>
               </button>
               <button>
-                <img src="/images/event-icon.svg" />
+                <img src={imgEventIcon} />
                 <span>Event</span>
               </button>
               <button>
-                <img src="/images/article-icon.svg" />
+                <img src={imgArticleIcon} />
                 <span>Article</span>
               </button>
             </div>
           </ShareBox>
           <Content>
-            {props.loading && <img src="/images/loading.svg" />}
+            {props.loading && <img src={imgLoading} />}
             {props.articles.length > 0 &&
               props.articles.map((article, key) => (
                 <Article key={key}>
@@ -88,7 +99,7 @@ const Main = (props) => {
                       </div>
                     </a>
                     <button>
-                      <img src="/images/ellipsis.svg" alt="" />
+                      <img src={imgEllipsis} alt="" />
                     </button>
                   </SharedActor>
                   <Description>{article.description}</Description>
@@ -115,19 +126,19 @@ const Main = (props) => {
                   </SocialCounts>
                   <SocialActions>
                     <button>
-                      <img src="/images/like-icon.svg"></img>
+                      <img src={imgLikeIcon}></img>
                       <span>Like</span>
                     </button>
                     <button>
-                      <img src="/images/comments-icon.svg"></img>
+                      <img src={imgCommentsIcon}></img>
                       <span>Comments</span>
                     </button>
                     <button>
-                      <img src="/images/share-icon.svg"></img>
+                      <img src={imgShareIcon}></img>
                       <span>Share</span>
                     </button>
                     <button>
-                      <img src="/images/send-icon.svg"></img>
+                      <img src={imgSendIcon}></img>
                       <span>Send</span>
                     </button>
                   </SocialActions>

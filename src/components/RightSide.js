@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import imgFeedIcon from "../images/feed-icon.svg";
+import imgRightIcon from "../images/right-icon.svg";
 
 const RightSide = (props) => {
   return (
@@ -6,7 +8,7 @@ const RightSide = (props) => {
       <FollowCard>
         <Title>
           <h2>Add to your feed</h2>
-          <img src="/images/feed-icon.svg" />
+          <img src={imgFeedIcon} />
         </Title>
         <FeedList>
           <li>
@@ -30,7 +32,7 @@ const RightSide = (props) => {
         </FeedList>
         <Recommendation>
           View all recommendation
-          <img src="/images/right-icon.svg" />
+          <img src={imgRightIcon} />
         </Recommendation>
       </FollowCard>
       <BannerCard>

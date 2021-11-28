@@ -1,6 +1,16 @@
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { signOutAPI } from "../actions";
+import imgHomeLogo from "../images/home-logo.svg";
+import imgSearchIcon from "../images/search-icon.svg";
+import imgNavHome from "../images/nav-home.svg";
+import imgNavNetwork from "../images/nav-network.svg";
+import imgNavJobs from "../images/nav-jobs.svg";
+import imgNavMessaging from "../images/nav-messaging.svg";
+import imgNavNotification from "../images/nav-notifications.svg";
+import imgUser from "../images/user.svg";
+import imgNavWork from "../images/nav-work.svg";
+import imgDownIcon from "../images/down-icon.svg";
 
 const Header = (props) => {
   return (
@@ -8,7 +18,7 @@ const Header = (props) => {
       <Content>
         <Logo>
           <a href="/home">
-            <img src="/images/home-logo.svg" />
+            <img src={imgHomeLogo} />
           </a>
         </Logo>
         <Search>
@@ -16,38 +26,38 @@ const Header = (props) => {
             <input type="text" placeholder="Search" />
           </div>
           <SearchIcon>
-            <img src="/images/search-icon.svg" />
+            <img src={imgSearchIcon} />
           </SearchIcon>
         </Search>
         <Nav>
           <NavListWrap>
             <NavList className="active">
               <a>
-                <img src="/images/nav-home.svg" />
+                <img src={imgNavHome} />
                 <span>Home</span>
               </a>
             </NavList>
             <NavList>
               <a>
-                <img src="/images/nav-network.svg" />
+                <img src={imgNavNetwork} />
                 <span>My Network</span>
               </a>
             </NavList>
             <NavList>
               <a>
-                <img src="/images/nav-jobs.svg" />
+                <img src={imgNavJobs} />
                 <span>Jobs</span>
               </a>
             </NavList>
             <NavList>
               <a>
-                <img src="/images/nav-messaging.svg" />
+                <img src={imgNavMessaging} />
                 <span>Messaging</span>
               </a>
             </NavList>
             <NavList>
               <a>
-                <img src="/images/nav-notifications.svg" />
+                <img src={imgNavNotification} />
                 <span>Notifications</span>
               </a>
             </NavList>
@@ -56,11 +66,11 @@ const Header = (props) => {
                 {props.user && props.user.photoURL ? (
                   <img src={props.user.photoURL} alt="" />
                 ) : (
-                  <img src="/images/user.svg" />
+                  <img src={imgUser} />
                 )}
                 <span>
                   Me
-                  <img src="/images/down-icon.svg" />
+                  <img src={imgDownIcon} />
                 </span>
               </a>
               <SignOut onClick={() => props.SignOut()}>
@@ -69,10 +79,10 @@ const Header = (props) => {
             </User>
             <Work>
               <a>
-                <img src="/images/nav-work.svg" />
+                <img src={imgNavWork} />
                 <span>
                   Work
-                  <img src="/images/down-icon.svg" />
+                  <img src={imgDownIcon} />
                 </span>
               </a>
             </Work>
