@@ -27,7 +27,7 @@ const PostModal = (props) => {
   };
 
   const postArticle = (e) => {
-    e.preventdefault();
+    e.preventDefault();
 
     if (e.target !== e.currentTarget) {
       return;
