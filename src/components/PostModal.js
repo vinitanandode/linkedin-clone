@@ -8,6 +8,7 @@ import imgUser from "../images/user.svg";
 import imgShareImg from "../images/share-image.svg";
 import imgShareVideo from "../images/share-video.svg";
 import imgShareComment from "../images/share-comment.svg";
+import imgClose from "../images/close.svg";
 
 const PostModal = (props) => {
   const [editorText, setEditorText] = useState("");
