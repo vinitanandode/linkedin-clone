@@ -3,7 +3,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Linkedin Clone
 <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/vinitanandode/linkedin-clone/Linkedin%20Clone%20CI"> <img alt="GitHub issues" src="https://img.shields.io/github/issues/vinitanandode/linkedin-clone"> <img alt="GitHub last commit (branch)" src="https://img.shields.io/github/last-commit/vinitanandode/linkedin-clone/master"> <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/vinitanandode/linkedin-clone"> <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/vinitanandode/linkedin-clone">
 
-. Check out the [demo](https://vinitanandode.github.io/to-do/).
+Check out the [demo](https://vinitanandode.github.io/to-do/).
 
 ### Features
 
