@@ -16,12 +16,12 @@ function App(props) {
     <div className="App">
       <Router>
         <Switch>
-          <Route path="/">
-            <Login />
-          </Route>
           <Route path="/home">
             <Header />
             <Home />
+          </Route>
+          <Route path="/">
+            <Login />
           </Route>
         </Switch>
       </Router>
