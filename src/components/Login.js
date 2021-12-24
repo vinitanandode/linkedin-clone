@@ -9,7 +9,7 @@ import imgGoogle from "../images/google.svg";
 const Login = (props) => {
   return (
     <Container>
-      {props.user && <Redirect to="/home" />}
+      {props.user && <Redirect to="./home" />}
       <Nav>
         <a href="/">
           <img src={imgLoginLogo} alt="" />
