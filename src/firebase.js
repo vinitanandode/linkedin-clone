@@ -7,6 +7,7 @@ const firebaseConfig = {
   storageBucket: "v-linkedin-clone.appspot.com",
   messagingSenderId: "199155481014",
   appId: "1:199155481014:web:cde496dca587b14ceae917",
+  measurementId: "G-XSGNQDQRGL",
 };
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);

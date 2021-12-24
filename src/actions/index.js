@@ -120,3 +120,15 @@ export function getArticlesAPI() {
       });
   };
 }
+
+export function likeArticle(key) {
+  return (dispatch) => {
+    let payload;
+    db.collection("articles")
+      .orderBy("actor.date", "desc")
+      .onSnapshot((snapshot) => {
+        payload = snapshot.docs.map((doc) => doc.data());
+      });
+    console.log("all", payload);
+  };
+}

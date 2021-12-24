@@ -2,7 +2,7 @@ import styled from "styled-components";
 import PostModal from "./PostModal";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { getArticlesAPI } from "../actions";
+import { getArticlesAPI, likeArticle } from "../actions";
 import ReactPlayer from "react-player";
 import imgUser from "../images/user.svg";
 import imgPhotoIcon from "../images/photo-icon.svg";
@@ -21,6 +21,7 @@ const Main = (props) => {
 
   useEffect(() => {
     props.getArticles();
+    console.log("article", props.articles.length  );
   }, []);
 
   const handleClick = (e) => {
@@ -41,6 +42,10 @@ const Main = (props) => {
         setShowModal("close");
         break;
     }
+  };
+
+  const handleLikeClick = (key) => {
+    props.likeArticle(key);
   };
 
   return (
@@ -86,7 +91,7 @@ const Main = (props) => {
             {props.loading && <img src={imgLoading} />}
             {props.articles.length > 0 &&
               props.articles.map((article, key) => (
-                <Article key={key}>
+                <Article key={key} id={article.id}>
                   <SharedActor>
                     <a>
                       <img src={article.actor.image} alt="" />
@@ -125,7 +130,7 @@ const Main = (props) => {
                     </li>
                   </SocialCounts>
                   <SocialActions>
-                    <button>
+                    <button onClick={() => handleLikeClick(article.id)}>
                       <img src={imgLikeIcon}></img>
                       <span>Like</span>
                     </button>
@@ -282,6 +287,7 @@ const SharedActor = styled.div`
     background: transparent;
     outline: none;
     border: none;
+    /* padding-top: 1px; */
 
     img {
       width: 20px;
@@ -332,16 +338,18 @@ const SocialCounts = styled.ul`
 `;
 
 const SocialActions = styled.div`
-  /* align-items: center; */
+  align-items: center;
   display: flex;
-  flex-direction: space-between;
-  /* justify-content: flex-start; */
+  /* flex-direction: space-between; */
+  justify-content: space-between;
   margin: 0;
   min-height: 40px;
   padding: 4px 8px;
 
   button {
-    display: inline-flex;
+    display: flex;
+    /* flex-direction: row; */
+    justify-content: center;
     align-items: center;
     padding: 8px;
     color: #0a66c2;
@@ -352,9 +360,14 @@ const SocialActions = styled.div`
       padding-left: 3px;
     }
 
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.08);
+      border-radius: 5px;
+    }
+
     @media (min-width: 768px) {
       span {
-        margin-left: 8px;
+        margin-left: 2px;
       }
     }
   }
@@ -377,6 +390,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
   getArticles: () => dispatch(getArticlesAPI()),
+  likeArticle: (key) => dispatch(likeArticle(key)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
