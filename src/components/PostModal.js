@@ -324,6 +324,16 @@ const Editer = styled.div`
 
 const UploadImage = styled.div`
   text-align: center;
+  label {
+    padding: 5px;
+    /* width: 100px; */
+    /* border-radius: 20%; */
+    /* border: 1px solid red; */
+    &:hover {
+      border: 0 solid rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.09);
+    }
+  }
   img {
     width: 100%;
   }
