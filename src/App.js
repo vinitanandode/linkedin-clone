@@ -16,7 +16,7 @@ function App(props) {
     <div className="App">
       <Router>
         <Switch>
-          <Route exact path="/">
+          <Route path="/">
             <Login />
           </Route>
           <Route path="/home">
