@@ -122,6 +122,9 @@ const Section = styled.div`
   @media (max-width: 768px) {
     margin: auto;
     min-height: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 `;
 
@@ -183,6 +186,10 @@ const Google = styled.button`
   transition-duration: 167ms;
   font-size: 20px;
   color: rgba(0, 0, 0, 0.6);
+
+  img {
+    padding: 5px;
+  }
 
   &:hover {
     background-color: rgba(207, 207, 207, 0.25);

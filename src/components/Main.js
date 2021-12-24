@@ -21,7 +21,7 @@ const Main = (props) => {
 
   useEffect(() => {
     props.getArticles();
-    console.log("article", props.articles.length  );
+    console.log("article", props.articles.length);
   }, []);
 
   const handleClick = (e) => {
@@ -96,7 +96,7 @@ const Main = (props) => {
                     <a>
                       <img src={article.actor.image} alt="" />
                       <div>
-                        <span>{article.actor.title}</span>
+                        <span className="title">{article.actor.title}</span>
                         <span>{article.actor.description}</span>
                         <span>
                           {article.actor.date.toDate().toLocaleDateString()}
@@ -253,11 +253,12 @@ const SharedActor = styled.div`
     img {
       width: 48px;
       height: 48px;
+      border-radius: 50%;
     }
     & > div {
       display: flex;
       flex-direction: column;
-      padding-left: 5px;
+      padding-left: 8px;
       flex-grow: 1;
       flex-basis: 0;
       margin-right: 8px;
@@ -283,7 +284,7 @@ const SharedActor = styled.div`
   button {
     position: absolute;
     right: 12px;
-    top: 0;
+    top: 10px;
     background: transparent;
     outline: none;
     border: none;
@@ -297,7 +298,7 @@ const SharedActor = styled.div`
 `;
 
 const Description = styled.div`
-  padding: 0 16px;
+  padding: 2px 16px;
   overflow: hidden;
   color: rgba(0, 0, 0, 0.9);
   font-size: 14px;
@@ -321,6 +322,8 @@ const SocialCounts = styled.ul`
   line-height: 1.3;
   display: flex;
   align-items: flex-start;
+  flex-direction: row;
+  justify-content: space-between;
   overflow: auto;
   margin: 0 16px;
   padding: 8px 0;
@@ -333,6 +336,9 @@ const SocialCounts = styled.ul`
       display: flex;
       border: none;
       background-color: white;
+      img {
+        padding: 0 3px;
+      }
     }
   }
 `;
@@ -340,8 +346,8 @@ const SocialCounts = styled.ul`
 const SocialActions = styled.div`
   align-items: center;
   display: flex;
-  /* flex-direction: space-between; */
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: space-evenly;
   margin: 0;
   min-height: 40px;
   padding: 4px 8px;
@@ -350,6 +356,7 @@ const SocialActions = styled.div`
     display: flex;
     /* flex-direction: row; */
     justify-content: center;
+    width: 150px;
     align-items: center;
     padding: 8px;
     color: #0a66c2;

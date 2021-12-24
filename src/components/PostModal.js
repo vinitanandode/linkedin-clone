@@ -64,7 +64,7 @@ const PostModal = (props) => {
         <Container>
           <Content>
             <Header>
-              <h2>Create a post</h2>
+              <h1>Create a post</h1>
               <button onClick={(event) => reset(event)}>
                 <img src={imgClose} alt="" />
               </button>
@@ -131,7 +131,7 @@ const PostModal = (props) => {
               <ShareComment>
                 <AssetButton>
                   <img src={imgShareComment} alt="" />
-                  Anyone
+                  <span>Anyone</span>
                 </AssetButton>
               </ShareComment>
               <PostButton
@@ -178,7 +178,7 @@ const Header = styled.div`
   display: block;
   padding: 16px 21px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  font-size: 16px;
+  font-size: 19px;
   line-height: 1.5;
   color: rgba(0, 0, 0, 0.6);
   font-weight: 400;
@@ -190,7 +190,14 @@ const Header = styled.div`
     height: 40px;
     width: 40px;
     min-width: auto;
-    color: rgba(0, 0, 0, 0.15);
+    border: none;
+    background: transparent;
+
+    &:hover {
+      border: 0 solid rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.09);
+      border-radius: 50%;
+    }
 
     svg,
     img {
@@ -234,15 +241,30 @@ const UserInfo = styled.div`
 const SharedCreation = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 12px 24px 12px 16px;
 `;
 
 const AssetButton = styled.button`
   display: flex;
   align-items: center;
+  justify-content: center;
   height: 40px;
   min-width: auto;
-  color: rgba(0, 0, 0, 0.5);
+  margin: 0 3px;
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  &:hover {
+    border: 0 solid rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.09);
+    border-radius: 20%;
+  }
+
+  img {
+    padding: 0 5px;
+  }
 `;
 
 const AttachAssets = styled.div`
@@ -267,11 +289,14 @@ const ShareComment = styled.div`
 
 const PostButton = styled.button`
   min-width: 60px;
+  font-weight: bold;
+  height: 30px;
   border-radius: 20px;
   padding-left: 16px;
   padding-right: 16px;
-  background: ${(props) => (props.disabled ? "rgba(0,0,0,0.8)" : "#0a66c2")};
-  color: ${(props) => (props.disabled ? "rgba(1,1,1,0.2)" : "white")};
+  border: none;
+  background: ${(props) => (props.disabled ? "rgba(0,0,0,0.09)" : "#0a66c2")};
+  color: ${(props) => (props.disabled ? "rgba(1,1,1,0.4)" : "white")};
 
   &:hover {
     background: ${(props) => (props.disabled ? "rgba(0,0,0,0.08)" : "#004182")};
@@ -285,6 +310,8 @@ const Editer = styled.div`
     width: 100%;
     min-height: 100px;
     resize: none;
+    border: none;
+    outline: none;
   }
 
   input {
