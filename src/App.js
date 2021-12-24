@@ -15,7 +15,7 @@ function App(props) {
 
   return (
     <div className="App">
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <Switch>
           <Route path="/home">
             <Header />
