@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import PostModal from "./PostModal";
 import { useEffect, useState } from "react";
+import firebase from "firebase";
 import { connect } from "react-redux";
-import { getArticlesAPI, likeArticle } from "../actions";
+import { getArticlesAPI, likeArticleAPI, postCommentAPI } from "../actions";
 import ReactPlayer from "react-player";
 import imgUser from "../images/user.svg";
 import imgPhotoIcon from "../images/photo-icon.svg";
@@ -10,18 +11,21 @@ import imgVideoIcon from "../images/video-icon.svg";
 import imgEventIcon from "../images/event-icon.svg";
 import imgArticleIcon from "../images/article-icon.svg";
 import imgLoading from "../images/loading.svg";
-import imgEllipsis from "../images/ellipsis.svg";
+import imgEllipsis from "../images/ellipsis1.svg";
 import imgLikeIcon from "../images/like-icon.svg";
 import imgCommentsIcon from "../images/comments-icon.svg";
 import imgShareIcon from "../images/share-icon.svg";
 import imgSendIcon from "../images/send-icon.svg";
+import { getAllByPlaceholderText } from "@testing-library/react";
 
 const Main = (props) => {
   const [showModal, setShowModal] = useState("close");
+  const [postComment, setPostComment] = useState("");
+  const [toggleComment, setToggleComment] = useState(false);
 
   useEffect(() => {
     props.getArticles();
-    console.log("article", props.articles.length);
+    console.log("articles", props.articles);
   }, []);
 
   const handleClick = (e) => {
@@ -46,6 +50,28 @@ const Main = (props) => {
 
   const handleLikeClick = (key) => {
     props.likeArticle(key);
+  };
+
+  const handleCommentClick = (key) => {
+    console.log("articles comment click", props.articles);
+    setToggleComment(!toggleComment);
+  };
+
+  const handlePostCommentClick = (id) => {
+    const dateNow = new Date();
+    const timeNow = dateNow.getDate();
+
+    const payload = {
+      articleId: id,
+      img: props.user.photoURL,
+      user: props.user.displayName,
+      comment: postComment,
+      timestamp: firebase.firestore.Timestamp.now(),
+      likes: 0,
+    };
+
+    props.postComment(payload);
+    setPostComment("");
   };
 
   return (
@@ -97,9 +123,18 @@ const Main = (props) => {
                       <img src={article.actor.image} alt="" />
                       <div>
                         <span className="title">{article.actor.title}</span>
-                        <span>{article.actor.description}</span>
+                        {/* <span>{article.actor.description}</span> */}
+                        <span>Software Developer</span>
                         <span>
-                          {article.actor.date.toDate().toLocaleDateString()}
+                          {article.actor.date
+                            .toDate()
+                            .toLocaleDateString("en-US", {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                              hour: "numeric",
+                              minute: "numeric",
+                            })}
                         </span>
                       </div>
                     </a>
@@ -122,11 +157,11 @@ const Main = (props) => {
                       <button>
                         <img src="https://static-exp1.licdn.com/sc/h/d310t2g24pvdy4pt1jkedo4yb" />
                         {/* <img src="https://static-exp1.licdn.com/sc/h/5thsbmikm6a8uov24ygwd914f" /> */}
-                        <span>75</span>
+                        <span>{article.likes}</span>
                       </button>
                     </li>
                     <li>
-                      <a>{article.comments} comments</a>
+                      <a>{`${article.commentList.length} comments`}</a>
                     </li>
                   </SocialCounts>
                   <SocialActions>
@@ -134,7 +169,7 @@ const Main = (props) => {
                       <img src={imgLikeIcon}></img>
                       <span>Like</span>
                     </button>
-                    <button>
+                    <button onClick={(id) => handleCommentClick(article.id)}>
                       <img src={imgCommentsIcon}></img>
                       <span>Comments</span>
                     </button>
@@ -147,6 +182,64 @@ const Main = (props) => {
                       <span>Send</span>
                     </button>
                   </SocialActions>
+                  <SocialComments toggleComment={toggleComment}>
+                    <AddComment>
+                      {props.user && props.user.photoURL ? (
+                        <img src={props.user.photoURL} />
+                      ) : (
+                        <img src={imgUser} />
+                      )}
+                      <div>
+                        <textarea
+                          value={postComment}
+                          onChange={(e) => setPostComment(e.target.value)}
+                          placeholder="Add a comment"
+                          autoFocus={true}
+                        />
+                      </div>
+                      <button
+                        onClick={(id) => handlePostCommentClick(article.id)}
+                      >
+                        Post
+                      </button>
+                    </AddComment>
+                    {article.commentList &&
+                      article.commentList.length > 0 &&
+                      article.commentList.map((com, key) => (
+                        <Comments key={key}>
+                          {com.user && com.img ? (
+                            <img src={com.img} />
+                          ) : (
+                            <img src={imgUser} />
+                          )}
+                          <CommentDetails>
+                            <div>
+                              <a>{com.user}</a>
+                              <span>
+                                {com.timestamp
+                                  .toDate()
+                                  .toLocaleDateString("en-US", {
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                  })}
+                                {/* <button> */}
+                                <img src={imgEllipsis} alt="" />
+                                {/* </button> */}
+                                {/* <CommentDelete>
+                                  <a>Delete Comment</a>
+                                  <a>Update Comment</a>
+                                </CommentDelete> */}
+                              </span>
+                            </div>
+                            <span>Software Developer</span>
+                            <span>{com.comment}</span>
+                          </CommentDetails>
+                        </Comments>
+                      ))}
+                  </SocialComments>
                 </Article>
               ))}
           </Content>
@@ -231,6 +324,7 @@ const ShareBox = styled(CommonCard)`
 
 const Article = styled(CommonCard)`
   padding: 0;
+  padding-bottom: 5px;
   margin: 0 0 8px;
   overflow: visible;
 `;
@@ -267,15 +361,13 @@ const SharedActor = styled.div`
       span {
         text-align: left;
         padding-top: 2px;
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
 
         &:first-child {
-          font-size: 14px;
           font-weight: 700;
           color: rgba(0, 0, 0, 1);
-        }
-        &:nth-child(n + 1) {
-          font-size: 12px;
-          color: rgba(0, 0, 0, 0.6);
+          font-size: 14px;
         }
       }
     }
@@ -321,7 +413,8 @@ const SharedImg = styled.div`
 const SocialCounts = styled.ul`
   line-height: 1.3;
   display: flex;
-  align-items: flex-start;
+  /* align-items: flex-start; */
+  align-items: center;
   flex-direction: row;
   justify-content: space-between;
   overflow: auto;
@@ -332,10 +425,28 @@ const SocialCounts = styled.ul`
   li {
     margin-right: 5px;
     font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(1, 1, 1, 0.6);
+    cursor: pointer;
+
+    a {
+      &:hover {
+        text-decoration: underline;
+        color: #0a66c2;
+      }
+    }
     button {
       display: flex;
       border: none;
       background-color: white;
+      cursor: pointer;
+      color: rgba(1, 1, 1, 0.6);
+      &:hover {
+        text-decoration: underline;
+        color: #0a66c2;
+      }
       img {
         padding: 0 3px;
       }
@@ -359,7 +470,7 @@ const SocialActions = styled.div`
     width: 150px;
     align-items: center;
     padding: 8px;
-    color: #0a66c2;
+    color: #5e5e5e;
     border: none;
     background-color: white;
 
@@ -380,6 +491,192 @@ const SocialActions = styled.div`
   }
 `;
 
+const SocialComments = styled.div`
+  display: ${(props) => (props.toggleComment === true ? "block" : "none")};
+`;
+
+const AddComment = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.2rem;
+  margin: 10px;
+
+  img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    padding-left: 5px;
+    padding-right: 3px;
+  }
+
+  div {
+    width: 100%;
+    height: auto;
+    padding-left: 5px;
+    /* display: inline-block; */
+    /* white-space: pre-wrap;
+    word-wrap: break-word; */
+    textarea {
+      /* line-height: 25px; */
+      width: 100%;
+      min-height: 30px;
+      padding-top: 7px;
+      padding-left: 15px;
+      padding-bottom: 7px;
+      font: inherit;
+      font-size: 12px;
+      /* display: flex; */
+      /* align-items: center; */
+      text-align: left;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.4);
+      border-radius: 30px;
+      resize: none;
+      outline: none;
+      overflow: hidden;
+    }
+  }
+  button {
+    width: 12%;
+    margin-left: 25px;
+    /* padding-left: 5px; */
+    height: 30px;
+    font-weight: bold;
+    border-radius: 20px;
+    border: none;
+    background: ${(props) => (props.disabled ? "rgba(0,0,0,0.09)" : "#0a66c2")};
+    color: ${(props) => (props.disabled ? "rgba(1,1,1,0.4)" : "white")};
+  }
+`;
+
+const CommentDelete = styled.div`
+  display: none;
+  position: absolute;
+  background: red;
+  top: 200px;
+  width: 100px;
+  height: 40px;
+`;
+
+const Comments = styled.div`
+  display: flex;
+  /* justify-content: space-between; */
+  flex-direction: row;
+  /* gap: 5px; */
+  margin: 8px;
+  img {
+    /* padding-top: 5px; */
+    top: 0;
+    padding-left: 5px;
+    padding-right: 3px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+  }
+  /* div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    background: #f2f2f2; //rgba(0, 0, 0, 0.09);
+    padding: 10px;    
+    width: 100%;
+    border-radius: 0 10px 10px 10px;
+    a {
+      font-size: 14px;
+      font-weight: bold;
+      padding: 2px;
+      margin-bottom: 2px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+
+      &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+        color: #0a66c2;
+      }
+      img {
+        top: 0;
+        width: 20px;
+        height: 15px;
+      }
+    }
+    span {
+      font-size: 14px;
+    }
+    div {
+      background-color: white;
+      display: none;
+    }
+  } */
+`;
+
+const CommentDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-left: 15px;
+  background: #f2f2f2;
+  padding: 10px;
+  margin-left: 5px;
+  border-radius: 0 10px 10px 10px;
+
+  div {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 14px;
+
+    a {
+      color: black;
+    }
+    span {
+      display: flex;
+      align-items: center;
+      color: grey;
+
+      img {
+        top: 0;
+        width: 20px;
+        height: 15px;
+
+        &:hover {
+          cursor: pointer;
+          ${CommentDelete} {
+            align-items: center;
+            display: flex;
+            border: 1px solid red;
+            justify-content: center;
+          }
+        }
+      }
+    }
+  }
+  span:first-of-type {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 12px;
+  }
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    font-size: 14px;
+    margin-bottom: 5px;
+    /* border: 1px solid red; */
+
+    /* &:first-child {
+      font-weight: 700;
+      color: red; //rgba(0, 0, 0, 1);
+      font-size: 14px;
+    } */
+  }
+`;
+
 const Content = styled.div`
   text-align: center;
   & > img {
@@ -397,7 +694,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
   getArticles: () => dispatch(getArticlesAPI()),
-  likeArticle: (key) => dispatch(likeArticle(key)),
+  likeArticle: (key) => dispatch(likeArticleAPI(key)),
+  postComment: (payload) => dispatch(postCommentAPI(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

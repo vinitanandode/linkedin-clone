@@ -1,6 +1,12 @@
 import { auth, provider, storage } from "../firebase";
-import { SET_USER, SET_LOADING_STATUS, GET_ARTICLES } from "./actionType";
+import {
+  SET_USER,
+  SET_LOADING_STATUS,
+  GET_ARTICLES,
+  ADD_COMMENT,
+} from "./actionType";
 import db from "../firebase";
+import firebase from "firebase/app";
 
 export const setUser = (payload) => ({
   type: SET_USER,
@@ -14,6 +20,11 @@ export const setLoading = (status) => ({
 
 export const getArticles = (payload) => ({
   type: GET_ARTICLES,
+  payload: payload,
+});
+
+export const addComment = (payload) => ({
+  type: ADD_COMMENT,
   payload: payload,
 });
 
@@ -81,6 +92,7 @@ export function postArticleAPI(payload) {
               date: payload.timestamp,
               image: payload.user.photoURL,
             },
+            // commentsList: db.collection("commentsList").add(),
             video: payload.video,
             sharedImg: downloadURL,
             comments: 0,
@@ -108,27 +120,61 @@ export function postArticleAPI(payload) {
   };
 }
 
+export function getCommentList(id) {}
+
 export function getArticlesAPI() {
   return (dispatch) => {
     let payload;
+    const list = [];
 
     db.collection("articles")
       .orderBy("actor.date", "desc")
       .onSnapshot((snapshot) => {
-        payload = snapshot.docs.map((doc) => doc.data());
+        payload = snapshot.docs.map((doc) => {
+          return {
+            id: doc.id,
+            commentList: getArticleCommentsAPI(doc.id),
+            ...doc.data(),
+          };
+        });
         dispatch(getArticles(payload));
       });
   };
 }
 
-export function likeArticle(key) {
-  return (dispatch) => {
-    let payload;
-    db.collection("articles")
-      .orderBy("actor.date", "desc")
-      .onSnapshot((snapshot) => {
-        payload = snapshot.docs.map((doc) => doc.data());
+export function getArticleCommentsAPI(key) {
+  const comments = [];
+
+  db.collection("articles")
+    .doc(key)
+    .collection("commentsList")
+    .orderBy("timestamp", "desc")
+    .get()
+    .then((subCollections) => {
+      subCollections.forEach((sub) => {
+        const t1 = { id: sub.id, ...sub.data() };
+        comments.push(t1);
       });
-    console.log("all", payload);
+    });
+  return comments;
+}
+
+export function postCommentAPI(payload) {
+  return (dispatch) => {
+    db.collection("articles")
+      .doc(payload.articleId)
+      .collection("commentsList")
+      .add(payload);
+    dispatch(addComment(payload));
+  };
+}
+
+export function likeArticleAPI(key) {
+  return (dispatch) => {
+    db.collection("articles")
+      .doc(key)
+      .update({
+        likes: firebase.firestore.FieldValue.increment(1),
+      });
   };
 }

@@ -1,4 +1,8 @@
-import { SET_LOADING_STATUS, GET_ARTICLES } from "../actions/actionType";
+import {
+  SET_LOADING_STATUS,
+  GET_ARTICLES,
+  ADD_COMMENT,
+} from "../actions/actionType";
 
 export const initState = {
   articles: [],
@@ -16,6 +20,13 @@ const articleReducer = (state = initState, action) => {
       return {
         ...state,
         articles: action.payload,
+      };
+    case ADD_COMMENT:
+      state.articles[
+        state.articles.findIndex((i) => i.id === action.payload.articleId)
+      ].commentList.unshift(action.payload);
+      return {
+        ...state,
       };
     default:
       return state;

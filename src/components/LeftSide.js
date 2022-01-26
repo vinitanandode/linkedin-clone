@@ -13,13 +13,15 @@ const LeftSide = (props) => {
         <UserInfo>
           <CardBackground />
           <a>
-            <Photo />
+            <Photo>
+              <img src={props.user ? props.user.photoURL : imgPhoto} />
+            </Photo>
             <Link>
-              Welmcome, {props.user ? props.user.displayName : "there!"}
+              Welcome, {props.user ? props.user.displayName : "there!"}
             </Link>
           </a>
           <a>
-            <AddPhotoText>Add a photo</AddPhotoText>
+            <AddPhotoText>Software Developer</AddPhotoText>
           </a>
         </UserInfo>
         <Widget>
@@ -92,18 +94,23 @@ const CardBackground = styled.div`
 
 const Photo = styled.div`
   box-shadow: none;
-  background-image: url(${imgPhoto});
   width: 72px;
   height: 72px;
-  box-sizing: border-box;
+  /* box-sizing: border-box;
   background-clip: content-box;
   background-color: white;
   background-position: center;
   background-size: 60%;
-  background-repeat: no-repeat;
-  border: 2px solid white;
+  background-repeat: no-repeat; */
+  /* border: 2px solid white; */
   margin: -38px auto 12px;
   border-radius: 50%;
+
+  img {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+  }
 `;
 
 const Link = styled.div`
@@ -114,7 +121,7 @@ const Link = styled.div`
 `;
 
 const AddPhotoText = styled.div`
-  color: #0a66c2;
+  color: grey;
   margin-top: 4px;
   font-size: 12px;
   line-height: 1.33;
