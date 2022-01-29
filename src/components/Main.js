@@ -3,7 +3,12 @@ import PostModal from "./PostModal";
 import { useEffect, useState } from "react";
 import firebase from "firebase";
 import { connect } from "react-redux";
-import { getArticlesAPI, likeArticleAPI, postCommentAPI } from "../actions";
+import {
+  getArticlesAPI,
+  likeArticleAPI,
+  postCommentAPI,
+  deleteArticleCommentAPI,
+} from "../actions";
 import ReactPlayer from "react-player";
 import imgUser from "../images/user.svg";
 import imgPhotoIcon from "../images/photo-icon.svg";
@@ -22,6 +27,7 @@ const Main = (props) => {
   const [showModal, setShowModal] = useState("close");
   const [postComment, setPostComment] = useState("");
   const [toggleComment, setToggleComment] = useState(false);
+  const [menuCommentToggle, setMenuCommentToggle] = useState(false);
 
   useEffect(() => {
     props.getArticles();
@@ -55,6 +61,18 @@ const Main = (props) => {
   const handleCommentClick = (key) => {
     console.log("articles comment click", props.articles);
     setToggleComment(!toggleComment);
+  };
+
+  const handleDeleteCommentClick = (articleId, commentId) => {
+    console.log("delete article id", articleId);
+    console.log("delete comment id", commentId);
+    props.deleteComment(articleId, commentId);
+  };
+
+  const handleCommentOptionsClick = (key) => {
+    console.log("menu option click before", menuCommentToggle);
+    setMenuCommentToggle(!menuCommentToggle);
+    console.log("menu option click after", menuCommentToggle);
   };
 
   const handlePostCommentClick = (id) => {
@@ -169,7 +187,10 @@ const Main = (props) => {
                       <img src={imgLikeIcon}></img>
                       <span>Like</span>
                     </button>
-                    <button onClick={(id) => handleCommentClick(article.id)}>
+                    <button
+                      id={article.id}
+                      onClick={(id) => handleCommentClick(article.id)}
+                    >
                       <img src={imgCommentsIcon}></img>
                       <span>Comments</span>
                     </button>
@@ -213,29 +234,52 @@ const Main = (props) => {
                             <img src={imgUser} />
                           )}
                           <CommentDetails>
-                            <div>
-                              <a>{com.user}</a>
-                              <span>
-                                {com.timestamp
-                                  .toDate()
-                                  .toLocaleDateString("en-US", {
-                                    day: "numeric",
-                                    month: "long",
-                                    year: "numeric",
-                                    hour: "numeric",
-                                    minute: "numeric",
-                                  })}
-                                {/* <button> */}
-                                <img src={imgEllipsis} alt="" />
-                                {/* </button> */}
-                                {/* <CommentDelete>
-                                  <a>Delete Comment</a>
-                                  <a>Update Comment</a>
-                                </CommentDelete> */}
-                              </span>
-                            </div>
-                            <span>Software Developer</span>
-                            <span>{com.comment}</span>
+                            <RowOne>
+                              <User>{com.user}</User>
+                              <CommentWrapper>
+                                <CommentTime>
+                                  {com.timestamp
+                                    .toDate()
+                                    .toLocaleDateString("en-US", {
+                                      day: "numeric",
+                                      month: "long",
+                                      year: "numeric",
+                                      hour: "numeric",
+                                      minute: "numeric",
+                                    })}
+                                </CommentTime>
+                                <CommentOptions
+                                  onClick={(id) =>
+                                    handleCommentOptionsClick(article.id)
+                                  }
+                                >
+                                  <button>
+                                    <img src={imgEllipsis} alt="" />
+                                  </button>
+                                  <CommentMenu
+                                    menuCommentToggle={menuCommentToggle}
+                                  >
+                                    <li>
+                                      <a
+                                        onClick={(articleId, commentId) =>
+                                          handleDeleteCommentClick(
+                                            article.id,
+                                            com.id
+                                          )
+                                        }
+                                      >
+                                        Delete a Comment
+                                      </a>
+                                    </li>
+                                    <li>
+                                      <a>Update Comment</a>
+                                    </li>
+                                  </CommentMenu>
+                                </CommentOptions>
+                              </CommentWrapper>
+                            </RowOne>
+                            <RowTwo>Software Developer</RowTwo>
+                            <RowThree>{com.comment}</RowThree>
                           </CommentDetails>
                         </Comments>
                       ))}
@@ -380,7 +424,7 @@ const SharedActor = styled.div`
     background: transparent;
     outline: none;
     border: none;
-    /* padding-top: 1px; */
+    cursor: pointer;
 
     img {
       width: 20px;
@@ -465,7 +509,6 @@ const SocialActions = styled.div`
 
   button {
     display: flex;
-    /* flex-direction: row; */
     justify-content: center;
     width: 150px;
     align-items: center;
@@ -515,11 +558,7 @@ const AddComment = styled.div`
     width: 100%;
     height: auto;
     padding-left: 5px;
-    /* display: inline-block; */
-    /* white-space: pre-wrap;
-    word-wrap: break-word; */
     textarea {
-      /* line-height: 25px; */
       width: 100%;
       min-height: 30px;
       padding-top: 7px;
@@ -527,8 +566,6 @@ const AddComment = styled.div`
       padding-bottom: 7px;
       font: inherit;
       font-size: 12px;
-      /* display: flex; */
-      /* align-items: center; */
       text-align: left;
       overflow: hidden;
       border: 1px solid rgba(0, 0, 0, 0.4);
@@ -541,7 +578,6 @@ const AddComment = styled.div`
   button {
     width: 12%;
     margin-left: 25px;
-    /* padding-left: 5px; */
     height: 30px;
     font-weight: bold;
     border-radius: 20px;
@@ -551,23 +587,28 @@ const AddComment = styled.div`
   }
 `;
 
-const CommentDelete = styled.div`
-  display: none;
+const CommentDelete = styled.ul`
   position: absolute;
+  visibility: hidden;
   background: red;
-  top: 200px;
-  width: 100px;
-  height: 40px;
+  top: 30px;
+  right: 10px;
+  width: 150px;
+  height: 70px;
+  list-style: none;
+  margin: 0;
+  padding: 10px;
+
+  li a {
+    padding: 5px;
+  }
 `;
 
 const Comments = styled.div`
   display: flex;
-  /* justify-content: space-between; */
   flex-direction: row;
-  /* gap: 5px; */
   margin: 8px;
   img {
-    /* padding-top: 5px; */
     top: 0;
     padding-left: 5px;
     padding-right: 3px;
@@ -575,48 +616,11 @@ const Comments = styled.div`
     height: 35px;
     border-radius: 50%;
   }
-  /* div {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    background: #f2f2f2; //rgba(0, 0, 0, 0.09);
-    padding: 10px;    
-    width: 100%;
-    border-radius: 0 10px 10px 10px;
-    a {
-      font-size: 14px;
-      font-weight: bold;
-      padding: 2px;
-      margin-bottom: 2px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-
-      &:hover {
-        cursor: pointer;
-        text-decoration: underline;
-        color: #0a66c2;
-      }
-      img {
-        top: 0;
-        width: 20px;
-        height: 15px;
-      }
-    }
-    span {
-      font-size: 14px;
-    }
-    div {
-      background-color: white;
-      display: none;
-    }
-  } */
 `;
 
 const CommentDetails = styled.div`
   display: flex;
+  position: relative;
   flex-direction: column;
   width: 100%;
   padding-left: 15px;
@@ -624,57 +628,105 @@ const CommentDetails = styled.div`
   padding: 10px;
   margin-left: 5px;
   border-radius: 0 10px 10px 10px;
+`;
 
-  div {
+const RowOne = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 14px;
+`;
+
+const User = styled.a`
+  color: black;
+`;
+
+const CommentWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const CommentTime = styled.span`
+  color: grey;
+  font-size: 12px;
+`;
+
+const CommentMenu = styled.ul`
+  position: absolute;
+  visibility: hidden;
+  z-index: 2;
+  border-radius: 5px 0 5px 5px;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0.3) 0px 4px 4px 0px;
+  top: 26px;
+  right: 10px;
+  width: auto;
+  height: auto;
+  list-style: none;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  opacity: 0;
+
+  background-color: white;
+  transition: opacity 0.5s, margin-top 0.2s;
+
+  li {
     display: flex;
-    align-items: center;
-    flex-direction: row;
-    justify-content: space-between;
-    font-size: 14px;
+    justify-content: left;
+    padding: 10px;
+    margin: 0;
 
-    a {
-      color: black;
+    &:hover {
+      background-color: grey;
+      color: white;
+      cursor: pointer;
     }
-    span {
-      display: flex;
-      align-items: center;
-      color: grey;
+  }
+`;
 
-      img {
-        top: 0;
-        width: 20px;
-        height: 15px;
+const CommentOptions = styled.div`
+  display: flex;
+  align-items: center;
+  color: grey;
 
-        &:hover {
-          cursor: pointer;
-          ${CommentDelete} {
-            align-items: center;
-            display: flex;
-            border: 1px solid red;
-            justify-content: center;
-          }
-        }
+  &:hover {
+    ${CommentMenu} {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  button {
+    border: none;
+
+    img {
+      top: 0;
+      width: 20px;
+      height: 15px;
+
+      &:hover {
+        cursor: pointer;
       }
     }
   }
-  span:first-of-type {
-    color: rgba(0, 0, 0, 0.6);
-    font-size: 12px;
-  }
-  span {
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    font-size: 14px;
-    margin-bottom: 5px;
-    /* border: 1px solid red; */
+`;
 
-    /* &:first-child {
-      font-weight: 700;
-      color: red; //rgba(0, 0, 0, 1);
-      font-size: 14px;
-    } */
-  }
+const RowTwo = styled.span`
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+  display: flex;
+  justify-content: left;
+  padding-top: 2px;
+  padding-bottom: 10px;
+`;
+
+const RowThree = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  font-size: 14px;
+  margin-bottom: 5px;
 `;
 
 const Content = styled.div`
@@ -696,6 +748,8 @@ const mapDispatchToProps = (dispatch) => ({
   getArticles: () => dispatch(getArticlesAPI()),
   likeArticle: (key) => dispatch(likeArticleAPI(key)),
   postComment: (payload) => dispatch(postCommentAPI(payload)),
+  deleteComment: (articleId, commentId) =>
+    dispatch(deleteArticleCommentAPI(articleId, commentId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

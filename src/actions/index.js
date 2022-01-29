@@ -4,6 +4,7 @@ import {
   SET_LOADING_STATUS,
   GET_ARTICLES,
   ADD_COMMENT,
+  DELETE_COMMENT,
 } from "./actionType";
 import db from "../firebase";
 import firebase from "firebase/app";
@@ -26,6 +27,12 @@ export const getArticles = (payload) => ({
 export const addComment = (payload) => ({
   type: ADD_COMMENT,
   payload: payload,
+});
+
+export const deleteComment = (articleId, commentId) => ({
+  type: DELETE_COMMENT,
+  articleId: articleId,
+  commentId: commentId,
 });
 
 export function signInAPI() {
@@ -176,5 +183,16 @@ export function likeArticleAPI(key) {
       .update({
         likes: firebase.firestore.FieldValue.increment(1),
       });
+  };
+}
+
+export function deleteArticleCommentAPI(articleId, commentId) {
+  return (dispatch) => {
+    db.collection("articles")
+      .doc(articleId)
+      .collection("commentsList")
+      .doc(commentId)
+      .delete();
+    dispatch(deleteComment(articleId, commentId));
   };
 }
