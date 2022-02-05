@@ -172,6 +172,12 @@ export function postCommentAPI(payload) {
       .doc(payload.articleId)
       .collection("commentsList")
       .add(payload);
+
+    // db.collection("articles")
+    //   .doc(payload.articleId)
+    //   .update({
+    //     comments: firebase.firestore.FieldValue.increment(1),
+    //   });
     dispatch(addComment(payload));
   };
 }
@@ -193,6 +199,12 @@ export function deleteArticleCommentAPI(articleId, commentId) {
       .collection("commentsList")
       .doc(commentId)
       .delete();
+
+    // db.collection("articles")
+    //   .doc(articleId)
+    //   .update({
+    //     comments: firebase.firestore.FieldValue.increment(-1),
+    //   });
     dispatch(deleteComment(articleId, commentId));
   };
 }

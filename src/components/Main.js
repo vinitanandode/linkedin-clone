@@ -21,13 +21,16 @@ import imgLikeIcon from "../images/like-icon.svg";
 import imgCommentsIcon from "../images/comments-icon.svg";
 import imgShareIcon from "../images/share-icon.svg";
 import imgSendIcon from "../images/send-icon.svg";
+import imgSaveIcon from "../images/save.svg";
+import imgDeleteIcon from "../images/delete.svg";
+import imgEditIcon from "../images/edit.svg";
 import { getAllByPlaceholderText } from "@testing-library/react";
 
 const Main = (props) => {
   const [showModal, setShowModal] = useState("close");
   const [postComment, setPostComment] = useState("");
-  const [toggleComment, setToggleComment] = useState(false);
   const [menuCommentToggle, setMenuCommentToggle] = useState(false);
+  const [showComments, setShowComments] = useState({});
 
   useEffect(() => {
     props.getArticles();
@@ -59,8 +62,10 @@ const Main = (props) => {
   };
 
   const handleCommentClick = (key) => {
-    console.log("articles comment click", props.articles);
-    setToggleComment(!toggleComment);
+    setShowComments((prevShowComments) => ({
+      ...prevShowComments,
+      [key]: !prevShowComments[key],
+    }));
   };
 
   const handleDeleteCommentClick = (articleId, commentId) => {
@@ -75,7 +80,8 @@ const Main = (props) => {
     console.log("menu option click after", menuCommentToggle);
   };
 
-  const handlePostCommentClick = (id) => {
+  const handlePostCommentClick = (e, id) => {
+    e.preventDefault();
     const dateNow = new Date();
     const timeNow = dateNow.getDate();
 
@@ -156,9 +162,34 @@ const Main = (props) => {
                         </span>
                       </div>
                     </a>
-                    <button>
-                      <img src={imgEllipsis} alt="" />
-                    </button>
+                    <ArticleOptions>
+                      <button>
+                        <img src={imgEllipsis} alt="" />
+                      </button>
+                      <ArticleMenu>
+                        <li>
+                          <img src={imgSaveIcon} />
+                          <a>
+                            Save
+                            <span></span>
+                          </a>
+                        </li>
+                        <li>
+                          <img src={imgDeleteIcon} />
+                          <a>
+                            Delete post
+                            <span></span>
+                          </a>
+                        </li>
+                        <li>
+                          <img src={imgEditIcon} />
+                          <a>
+                            Edit post
+                            <span></span>
+                          </a>
+                        </li>
+                      </ArticleMenu>
+                    </ArticleOptions>
                   </SharedActor>
                   <Description>{article.description}</Description>
                   <SharedImg>
@@ -179,7 +210,7 @@ const Main = (props) => {
                       </button>
                     </li>
                     <li>
-                      <a>{`${article.commentList.length} comments`}</a>
+                      <a>{`${article.comments} comments`}</a>
                     </li>
                   </SocialCounts>
                   <SocialActions>
@@ -203,87 +234,91 @@ const Main = (props) => {
                       <span>Send</span>
                     </button>
                   </SocialActions>
-                  <SocialComments toggleComment={toggleComment}>
-                    <AddComment>
-                      {props.user && props.user.photoURL ? (
-                        <img src={props.user.photoURL} />
-                      ) : (
-                        <img src={imgUser} />
-                      )}
-                      <div>
-                        <textarea
-                          value={postComment}
-                          onChange={(e) => setPostComment(e.target.value)}
-                          placeholder="Add a comment"
-                          autoFocus={true}
-                        />
-                      </div>
-                      <button
-                        onClick={(id) => handlePostCommentClick(article.id)}
-                      >
-                        Post
-                      </button>
-                    </AddComment>
-                    {article.commentList &&
-                      article.commentList.length > 0 &&
-                      article.commentList.map((com, key) => (
-                        <Comments key={key}>
-                          {com.user && com.img ? (
-                            <img src={com.img} />
-                          ) : (
-                            <img src={imgUser} />
-                          )}
-                          <CommentDetails>
-                            <RowOne>
-                              <User>{com.user}</User>
-                              <CommentWrapper>
-                                <CommentTime>
-                                  {com.timestamp
-                                    .toDate()
-                                    .toLocaleDateString("en-US", {
-                                      day: "numeric",
-                                      month: "long",
-                                      year: "numeric",
-                                      hour: "numeric",
-                                      minute: "numeric",
-                                    })}
-                                </CommentTime>
-                                <CommentOptions
-                                  onClick={(id) =>
-                                    handleCommentOptionsClick(article.id)
-                                  }
-                                >
-                                  <button>
-                                    <img src={imgEllipsis} alt="" />
-                                  </button>
-                                  <CommentMenu
-                                    menuCommentToggle={menuCommentToggle}
+                  {showComments[article.id] ? (
+                    <SocialComments>
+                      <AddComment>
+                        {props.user && props.user.photoURL ? (
+                          <img src={props.user.photoURL} />
+                        ) : (
+                          <img src={imgUser} />
+                        )}
+                        <div>
+                          <textarea
+                            value={postComment}
+                            onChange={(e) => setPostComment(e.target.value)}
+                            placeholder="Add a comment"
+                            autoFocus={true}
+                          />
+                        </div>
+                        <button
+                          onClick={(e, id) =>
+                            handlePostCommentClick(e, article.id)
+                          }
+                        >
+                          Post
+                        </button>
+                      </AddComment>
+                      {article.commentList &&
+                        article.commentList.length > 0 &&
+                        article.commentList.map((com, key) => (
+                          <Comments key={key}>
+                            {com.user && com.img ? (
+                              <img src={com.img} />
+                            ) : (
+                              <img src={imgUser} />
+                            )}
+                            <CommentDetails>
+                              <RowOne>
+                                <User>{com.user}</User>
+                                <CommentWrapper>
+                                  <CommentTime>
+                                    {com.timestamp
+                                      .toDate()
+                                      .toLocaleDateString("en-US", {
+                                        day: "numeric",
+                                        month: "long",
+                                        year: "numeric",
+                                        hour: "numeric",
+                                        minute: "numeric",
+                                      })}
+                                  </CommentTime>
+                                  <CommentOptions
+                                    onClick={(id) =>
+                                      handleCommentOptionsClick(article.id)
+                                    }
                                   >
-                                    <li>
-                                      <a
-                                        onClick={(articleId, commentId) =>
-                                          handleDeleteCommentClick(
-                                            article.id,
-                                            com.id
-                                          )
-                                        }
-                                      >
-                                        Delete a Comment
-                                      </a>
-                                    </li>
-                                    <li>
-                                      <a>Update Comment</a>
-                                    </li>
-                                  </CommentMenu>
-                                </CommentOptions>
-                              </CommentWrapper>
-                            </RowOne>
-                            <RowTwo>Software Developer</RowTwo>
-                            <RowThree>{com.comment}</RowThree>
-                          </CommentDetails>
-                        </Comments>
-                      ))}
-                  </SocialComments>
+                                    <button>
+                                      <img src={imgEllipsis} alt="" />
+                                    </button>
+                                    <CommentMenu
+                                      menuCommentToggle={menuCommentToggle}
+                                    >
+                                      <li>
+                                        <a
+                                          onClick={(articleId, commentId) =>
+                                            handleDeleteCommentClick(
+                                              article.id,
+                                              com.id
+                                            )
+                                          }
+                                        >
+                                          Delete a Comment
+                                        </a>
+                                      </li>
+                                      <li>
+                                        <a>Update Comment</a>
+                                      </li>
+                                    </CommentMenu>
+                                  </CommentOptions>
+                                </CommentWrapper>
+                              </RowOne>
+                              <RowTwo>Software Developer</RowTwo>
+                              <RowThree>{com.comment}</RowThree>
+                            </CommentDetails>
+                          </Comments>
+                        ))}
+                    </SocialComments>
+                  ) : null}
                 </Article>
               ))}
           </Content>
@@ -371,6 +406,7 @@ const Article = styled(CommonCard)`
   padding-bottom: 5px;
   margin: 0 0 8px;
   overflow: visible;
+  position: relative;
 `;
 
 const SharedActor = styled.div`
@@ -534,9 +570,7 @@ const SocialActions = styled.div`
   }
 `;
 
-const SocialComments = styled.div`
-  display: ${(props) => (props.toggleComment === true ? "block" : "none")};
-`;
+const SocialComments = styled.div``;
 
 const AddComment = styled.div`
   display: flex;
@@ -584,23 +618,6 @@ const AddComment = styled.div`
     border: none;
     background: ${(props) => (props.disabled ? "rgba(0,0,0,0.09)" : "#0a66c2")};
     color: ${(props) => (props.disabled ? "rgba(1,1,1,0.4)" : "white")};
-  }
-`;
-
-const CommentDelete = styled.ul`
-  position: absolute;
-  visibility: hidden;
-  background: red;
-  top: 30px;
-  right: 10px;
-  width: 150px;
-  height: 70px;
-  list-style: none;
-  margin: 0;
-  padding: 10px;
-
-  li a {
-    padding: 5px;
   }
 `;
 
@@ -655,6 +672,7 @@ const CommentTime = styled.span`
 const CommentMenu = styled.ul`
   position: absolute;
   visibility: hidden;
+  font-size: 14px;
   z-index: 2;
   border-radius: 5px 0 5px 5px;
   box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px,
@@ -667,7 +685,6 @@ const CommentMenu = styled.ul`
   margin-top: 2px;
   margin-bottom: 2px;
   opacity: 0;
-
   background-color: white;
   transition: opacity 0.5s, margin-top 0.2s;
 
@@ -678,8 +695,7 @@ const CommentMenu = styled.ul`
     margin: 0;
 
     &:hover {
-      background-color: grey;
-      color: white;
+      background-color: rgba(0, 0, 0, 0.08);
       cursor: pointer;
     }
   }
@@ -699,6 +715,7 @@ const CommentOptions = styled.div`
 
   button {
     border: none;
+    background: transparent;
 
     img {
       top: 0;
@@ -708,6 +725,20 @@ const CommentOptions = styled.div`
       &:hover {
         cursor: pointer;
       }
+    }
+  }
+`;
+
+const ArticleOptions = styled(CommentOptions)``;
+
+const ArticleMenu = styled(CommentMenu)`
+  li {
+    img {
+      width: 20px;
+      height: 20px;
+    }
+    a {
+      padding-left: 5px;
     }
   }
 `;

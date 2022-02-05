@@ -11,6 +11,7 @@ import imgNavNotification from "../images/nav-notifications.svg";
 import imgUser from "../images/user.svg";
 import imgNavWork from "../images/nav-work.svg";
 import imgDownIcon from "../images/down-icon.svg";
+import { CommentMenu, CommentOptions } from "../style/sharedStyles";
 
 const Header = (props) => {
   return (
@@ -68,14 +69,44 @@ const Header = (props) => {
                 ) : (
                   <img src={imgUser} />
                 )}
-                <span>
+                {/* <span>
                   Me
                   <img src={imgDownIcon} />
-                </span>
+                </span> */}
+                <ProfileOptions>
+                  <button>
+                    Me
+                    <img src={imgDownIcon} alt="" />
+                  </button>
+                  <ProfileMenu>
+                    <li>
+                      <Profile>
+                        {props.user && props.user.photoURL ? (
+                          <img src={props.user.photoURL} alt="" />
+                        ) : (
+                          <img src={imgUser} />
+                        )}
+                        <div>
+                          <RowOne>
+                            {props.user && props.user.displayName
+                              ? props.user.displayName
+                              : ""}
+                          </RowOne>
+                          <RowTwo>Software Developer</RowTwo>
+                        </div>
+                      </Profile>
+                      <button>View Profile</button>
+                    </li>
+                    {/* <li>View Profile</li> */}
+                    <li>Settings & Privacy</li>
+                    <li>Help</li>
+                    <li>Language</li>
+                    <li>Posts & Activity</li>
+                    <li>Job Posting Account</li>
+                    <li onClick={() => props.SignOut()}>Sign Out</li>
+                  </ProfileMenu>
+                </ProfileOptions>
               </a>
-              <SignOut onClick={() => props.SignOut()}>
-                <a>Sign Out</a>
-              </SignOut>
             </User>
             <Work>
               <a>
@@ -263,6 +294,110 @@ const User = styled(NavList)`
       justify-content: center;
     }
   }
+`;
+
+const ProfileMenu = styled.ul`
+  position: absolute;
+  visibility: hidden;
+  font-size: 14px;
+  z-index: 2;
+  border-radius: 5px 0 5px 5px;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0.3) 0px 4px 4px 0px;
+  top: 45px;
+  right: 10px;
+  width: 240px;
+  height: auto;
+  list-style: none;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  opacity: 0;
+  background-color: white;
+  transition: opacity 0.5s, margin-top 0.2s;
+
+  li {
+    display: flex;
+    justify-content: center;
+    align-items: left;
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+
+    &:hover:nth-child(1) {
+      background-color: white;
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.08);
+      cursor: pointer;
+    }
+
+    button {
+      border: 1px solid #0a66c2;
+      border-radius: 20px;
+      padding: 5px;
+      margin: 5px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #b2cbeb;
+      }
+    }
+  }
+`;
+
+const ProfileOptions = styled.div`
+  display: flex;
+  align-items: center;
+  color: grey;
+
+  &:hover {
+    ${ProfileMenu} {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  button {
+    border: none;
+    background: transparent;
+
+    img {
+      top: 0;
+      width: 20px;
+      height: 15px;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+`;
+
+const Profile = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding: 5px;
+  height: 60px;
+  img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+  }
+  div {
+    padding: 10px;
+  }
+`;
+
+const RowOne = styled.span`
+  color: black;
+  font-weight: 700;
+  font-size: 14px;
+`;
+
+const RowTwo = styled.span`
+  color: grey;
+  font-size: 12px;
 `;
 
 const Work = styled(User)`
